@@ -2,7 +2,7 @@
 const feeds = [
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss" },
   { name: "Sky News", url: "https://feeds.skynews.com/feeds/rss/home.xml" },
-  { name: "CNN", url: "http://rss.cnn.com/rss/cnn_topstories.rss" },
+  { name: "Haaretz", url: "https://www.haaretz.com/misc/subscribe-to-rss-feed" },
   { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   { name: "BBC News", url: "http://feeds.bbci.co.uk/news/rss.xml" }
 ];
