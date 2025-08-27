@@ -22,13 +22,22 @@ const sourceColors = {
   "BBC News": "#ccffcc"        // verde chiaro
 };
 
-// 🔤 Funzione per tradurre il testo in italiano (MyMemory API)
+// 🔤 Funzione per tradurre il testo in italiano con LibreTranslate
 async function translateText(text) {
-  const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|it`;
   try {
-    const res = await fetch(apiUrl);
+    const res = await fetch("https://libretranslate.com/translate", {
+      method: "POST",
+      body: JSON.stringify({
+        q: text,
+        source: "en",
+        target: "it",
+        format: "text"
+      }),
+      headers: { "Content-Type": "application/json" }
+    });
+
     const data = await res.json();
-    return data.responseData.translatedText || text;
+    return data.translatedText || text;
   } catch (e) {
     console.error("Errore traduzione:", e);
     return text; // fallback: titolo originale
