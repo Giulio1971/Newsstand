@@ -2,7 +2,7 @@
 const feeds = [
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss" },
   { name: "Sky News", url: "https://feeds.skynews.com/feeds/rss/home.xml" },
-  { name: "Haaretz", url: "https://www.haaretz.com/misc/subscribe-to-rss-feed" },
+  { name: "TASS", url: "https://tass.com/rss/v2.xml" },
   { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   { name: "BBC News", url: "http://feeds.bbci.co.uk/news/rss.xml" }
 ];
@@ -17,7 +17,7 @@ container.appendChild(list);
 const sourceColors = {
   "The Guardian": "#cce5ff",   // azzurro chiaro
   "Sky News": "#ffcccc",       // rosso chiaro
-  "Haaretz": "#e0ccff",            // viola chiaro
+  "TASS": "#e0ccff",            // viola chiaro
   "Al Jazeera": "#ffe5cc",     // arancio chiaro
   "BBC News": "#ccffcc"        // verde chiaro
 };
