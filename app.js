@@ -13,7 +13,16 @@ const container = document.getElementById("news");
 const list = document.createElement("ul");
 container.appendChild(list);
 
-// Funzione per tradurre il testo in italiano usando MyMemory
+// 🎨 Mappa colori per ogni fonte
+const sourceColors = {
+  "The Guardian": "#cce5ff",   // azzurro chiaro
+  "Sky News": "#ffcccc",       // rosso chiaro
+  "CNN": "#e0ccff",            // viola chiaro
+  "Al Jazeera": "#ffe5cc",     // arancio chiaro
+  "BBC News": "#ccffcc"        // verde chiaro
+};
+
+// 🔤 Funzione per tradurre il testo in italiano (MyMemory API)
 async function translateText(text) {
   const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|it`;
   try {
@@ -22,7 +31,7 @@ async function translateText(text) {
     return data.responseData.translatedText || text;
   } catch (e) {
     console.error("Errore traduzione:", e);
-    return text;
+    return text; // se fallisce, ritorna titolo originale
   }
 }
 
@@ -30,7 +39,7 @@ function loadNews() {
   // Clear the list before re-rendering
   list.innerHTML = "";
 
-  // Fetch all feeds in parallel
+  // Fetch all feeds in parallelo
   Promise.all(
     feeds.map(feed => {
       const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
@@ -48,10 +57,10 @@ function loadNews() {
         });
     })
   ).then(async results => {
-    // Flatten all items into one array
+    // Flatten all items
     let allItems = results.flat();
 
-    // --- STEP 1: prime 2 notizie per ogni fonte (ordine delle fonti) ---
+    // --- STEP 1: prime 2 notizie per ogni fonte ---
     let topPerSource = [];
     feeds.forEach(feed => {
       const fromSource = allItems
@@ -77,10 +86,16 @@ function loadNews() {
 
       const formattedDate = `${dayName} alle ${hours}:${minutes}`;
 
-      // Traduci il titolo prima di mostrarlo
+      // Traduci titolo prima di mostrarlo
       const translatedTitle = await translateText(item.title);
 
+      // Crea elemento lista con colore di sfondo
       const li = document.createElement("li");
+      li.style.backgroundColor = sourceColors[item.source] || "#ffffff"; // fallback bianco
+      li.style.padding = "12px";
+      li.style.borderRadius = "8px";
+      li.style.marginBottom = "8px";
+
       li.innerHTML = `<a href="${item.link}" target="_blank">${translatedTitle}</a>
                       <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
       list.appendChild(li);
@@ -91,5 +106,5 @@ function loadNews() {
 // Initial load
 loadNews();
 
-// Refresh every 5 minutes (300,000 ms)
+// Refresh ogni 5 minuti (300.000 ms)
 setInterval(loadNews, 300000);
