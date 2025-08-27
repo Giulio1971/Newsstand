@@ -3,8 +3,9 @@ const feeds = [
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss" },
   { name: "Sky News", url: "hhttps://feeds.skynews.com/feeds/rss/home.xml" },
   { name: "CNN", url: "http://rss.cnn.com/rss/cnn_topstories.rss" },
-  { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" }
-];
+  { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
+  { name: "BBC News", url: "http://feeds.bbci.co.uk/news/rss.xml" }
+  ];
 
 const container = document.getElementById("news");
 
