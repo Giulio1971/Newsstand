@@ -22,22 +22,13 @@ const sourceColors = {
   "BBC News": "#ccffcc"        // verde chiaro
 };
 
-// 🔤 Funzione per tradurre il testo in italiano con LibreTranslate
+// 🔤 Funzione per tradurre il testo in italiano (MyMemory API)
 async function translateText(text) {
+  const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|it`;
   try {
-    const res = await fetch("https://libretranslate.com/translate", {
-      method: "POST",
-      body: JSON.stringify({
-        q: text,
-        source: "en",
-        target: "it",
-        format: "text"
-      }),
-      headers: { "Content-Type": "application/json" }
-    });
-
+    const res = await fetch(apiUrl);
     const data = await res.json();
-    return data.translatedText || text;
+    return data.responseData.translatedText || text;
   } catch (e) {
     console.error("Errore traduzione:", e);
     return text; // fallback: titolo originale
@@ -73,6 +64,8 @@ function loadNews() {
     // Limito a 50 notizie
     const finalList = allItems.slice(0, 50);
 
+    let lastDay = null;
+
     // Render
     for (const item of finalList) {
       const days = ["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
@@ -85,6 +78,17 @@ function loadNews() {
 
       // Traduzione titolo
       const translatedTitle = await translateText(item.title);
+
+      // 🔹 Se il giorno è diverso dal precedente, inserisco una riga nera separatrice
+      if (lastDay && lastDay !== dayName) {
+        const separator = document.createElement("hr");
+        separator.style.border = "0";
+        separator.style.height = "2px";
+        separator.style.backgroundColor = "black";
+        separator.style.margin = "16px 0";
+        list.appendChild(separator);
+      }
+      lastDay = dayName;
 
       const li = document.createElement("li");
       li.style.backgroundColor = sourceColors[item.source] || "#ffffff";
