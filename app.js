@@ -22,19 +22,6 @@ const sourceColors = {
   "BBC News": "#ccffcc"        // verde chiaro
 };
 
-// 🔤 Funzione per tradurre il testo in italiano (MyMemory API)
-async function translateText(text) {
-  const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|it`;
-  try {
-    const res = await fetch(apiUrl);
-    const data = await res.json();
-    return data.responseData.translatedText || text;
-  } catch (e) {
-    console.error("Errore traduzione:", e);
-    return text; // fallback: titolo originale
-  }
-}
-
 function loadNews() {
   list.innerHTML = ""; // svuoto la lista
 
@@ -54,7 +41,7 @@ function loadNews() {
           return [];
         });
     })
-  ).then(async results => {
+  ).then(results => {
     // Unisco tutte le notizie in un array unico
     let allItems = results.flat();
 
@@ -76,9 +63,6 @@ function loadNews() {
 
       const formattedDate = `${dayName} alle ${hours}:${minutes}`;
 
-      // Traduzione titolo
-      const translatedTitle = await translateText(item.title);
-
       // 🔹 Se il giorno è diverso dal precedente, inserisco una riga nera separatrice
       if (lastDay && lastDay !== dayName) {
         const separator = document.createElement("hr");
@@ -97,7 +81,7 @@ function loadNews() {
       li.style.marginBottom = "8px";
 
       li.innerHTML = `<strong style="display:block; font-size:14px; color:#333;">${item.source}</strong>
-                      <a href="${item.link}" target="_blank">${translatedTitle}</a>
+                      <a href="${item.link}" target="_blank">${item.title}</a>
                       <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
       list.appendChild(li);
     }
