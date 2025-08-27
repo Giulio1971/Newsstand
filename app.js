@@ -1,17 +1,30 @@
 // Lista dei feed RSS che vuoi seguire
 const feeds = [
   { name: "The Guardian", url: "https://www.theguardian.com/world/rss" },
-  { name: "Sky News", url: "hhttps://feeds.skynews.com/feeds/rss/home.xml" },
+  { name: "Sky News", url: "https://feeds.skynews.com/feeds/rss/home.xml" },
   { name: "CNN", url: "http://rss.cnn.com/rss/cnn_topstories.rss" },
   { name: "Al Jazeera", url: "https://www.aljazeera.com/xml/rss/all.xml" },
   { name: "BBC News", url: "http://feeds.bbci.co.uk/news/rss.xml" }
-  ];
+];
 
 const container = document.getElementById("news");
 
 // Create one <ul> for all news
 const list = document.createElement("ul");
 container.appendChild(list);
+
+// Funzione per tradurre il testo in italiano usando MyMemory
+async function translateText(text) {
+  const apiUrl = `https://api.mymemory.translated.net/get?q=${encodeURIComponent(text)}&langpair=en|it`;
+  try {
+    const res = await fetch(apiUrl);
+    const data = await res.json();
+    return data.responseData.translatedText || text;
+  } catch (e) {
+    console.error("Errore traduzione:", e);
+    return text;
+  }
+}
 
 function loadNews() {
   // Clear the list before re-rendering
@@ -34,7 +47,7 @@ function loadNews() {
           return [];
         });
     })
-  ).then(results => {
+  ).then(async results => {
     // Flatten all items into one array
     let allItems = results.flat();
 
@@ -43,7 +56,7 @@ function loadNews() {
     feeds.forEach(feed => {
       const fromSource = allItems
         .filter(i => i.source === feed.name)
-        .sort((a, b) => b.pubDate - a.pubDate); // ordino per prendere le 2 più recenti
+        .sort((a, b) => b.pubDate - a.pubDate);
       topPerSource.push(...fromSource.slice(0, 2));
     });
 
@@ -55,11 +68,8 @@ function loadNews() {
     const finalList = [...topPerSource, ...remaining].slice(0, 50);
 
     // --- STEP 4: render in pagina ---
-    finalList.forEach(item => {
-      const days = [
-        "Domenica", "Lunedì", "Martedì",
-        "Mercoledì", "Giovedì", "Venerdì", "Sabato"
-      ];
+    for (const item of finalList) {
+      const days = ["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
       const dayName = days[item.pubDate.getDay()];
 
       const hours = item.pubDate.getHours().toString().padStart(2, "0");
@@ -67,12 +77,14 @@ function loadNews() {
 
       const formattedDate = `${dayName} alle ${hours}:${minutes}`;
 
-      const li = document.createElement("li");
-      li.innerHTML = `<a href="${item.link}">${item.title}</a>
-                      <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
+      // Traduci il titolo prima di mostrarlo
+      const translatedTitle = await translateText(item.title);
 
+      const li = document.createElement("li");
+      li.innerHTML = `<a href="${item.link}" target="_blank">${translatedTitle}</a>
+                      <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
       list.appendChild(li);
-    });
+    }
   });
 }
 
