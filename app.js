@@ -17,7 +17,7 @@ container.appendChild(list);
 const sourceColors = {
   "The Guardian": "#cce5ff",   // azzurro chiaro
   "Sky News": "#ffcccc",       // rosso chiaro
-  "CNN": "#e0ccff",            // viola chiaro
+  "Haaretz": "#e0ccff",            // viola chiaro
   "Al Jazeera": "#ffe5cc",     // arancio chiaro
   "BBC News": "#ccffcc"        // verde chiaro
 };
