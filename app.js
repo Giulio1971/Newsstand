@@ -80,8 +80,7 @@ function loadNews() {
       li.style.borderRadius = "8px";
       li.style.marginBottom = "8px";
 
-      li.innerHTML = `<strong style="display:block; font-size:14px; color:#333;">${item.source}</strong>
-                      <a href="${item.link}" target="_blank">${item.title}</a>
+      li.innerHTML = `<a href="${item.link}" target="_blank">${item.title}</a>
                       <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
       list.appendChild(li);
     }
