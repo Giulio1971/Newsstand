@@ -48,8 +48,8 @@ function loadNews() {
     // Ordino in ordine cronologico inverso
     allItems.sort((a, b) => b.pubDate - a.pubDate);
 
-    // Limito a 50 notizie
-    const finalList = allItems.slice(0, 50);
+    // Limito a 100 notizie
+    const finalList = allItems.slice(0, 100);
 
     let lastDay = null;
 
