@@ -31,15 +31,13 @@ async function translateText(text) {
     return data.responseData.translatedText || text;
   } catch (e) {
     console.error("Errore traduzione:", e);
-    return text; // se fallisce, ritorna titolo originale
+    return text; // fallback: titolo originale
   }
 }
 
 function loadNews() {
-  // Clear the list before re-rendering
-  list.innerHTML = "";
+  list.innerHTML = ""; // svuoto la lista
 
-  // Fetch all feeds in parallelo
   Promise.all(
     feeds.map(feed => {
       const apiUrl = `https://api.rss2json.com/v1/api.json?rss_url=${encodeURIComponent(feed.url)}`;
@@ -57,26 +55,16 @@ function loadNews() {
         });
     })
   ).then(async results => {
-    // Flatten all items
+    // Unisco tutte le notizie in un array unico
     let allItems = results.flat();
 
-    // --- STEP 1: prime 2 notizie per ogni fonte ---
-    let topPerSource = [];
-    feeds.forEach(feed => {
-      const fromSource = allItems
-        .filter(i => i.source === feed.name)
-        .sort((a, b) => b.pubDate - a.pubDate);
-      topPerSource.push(...fromSource.slice(0, 2));
-    });
+    // Ordino in ordine cronologico inverso
+    allItems.sort((a, b) => b.pubDate - a.pubDate);
 
-    // --- STEP 2: le altre notizie ---
-    let remaining = allItems.filter(item => !topPerSource.includes(item));
-    remaining.sort((a, b) => b.pubDate - a.pubDate);
+    // Limito a 50 notizie
+    const finalList = allItems.slice(0, 50);
 
-    // --- STEP 3: concatenare e limitare a 50 ---
-    const finalList = [...topPerSource, ...remaining].slice(0, 50);
-
-    // --- STEP 4: render in pagina ---
+    // Render
     for (const item of finalList) {
       const days = ["Domenica","Lunedì","Martedì","Mercoledì","Giovedì","Venerdì","Sabato"];
       const dayName = days[item.pubDate.getDay()];
@@ -86,17 +74,17 @@ function loadNews() {
 
       const formattedDate = `${dayName} alle ${hours}:${minutes}`;
 
-      // Traduci titolo prima di mostrarlo
+      // Traduzione titolo
       const translatedTitle = await translateText(item.title);
 
-      // Crea elemento lista con colore di sfondo
       const li = document.createElement("li");
-      li.style.backgroundColor = sourceColors[item.source] || "#ffffff"; // fallback bianco
+      li.style.backgroundColor = sourceColors[item.source] || "#ffffff";
       li.style.padding = "12px";
       li.style.borderRadius = "8px";
       li.style.marginBottom = "8px";
 
-      li.innerHTML = `<a href="${item.link}" target="_blank">${translatedTitle}</a>
+      li.innerHTML = `<strong style="display:block; font-size:14px; color:#333;">${item.source}</strong>
+                      <a href="${item.link}" target="_blank">${translatedTitle}</a>
                       <span style="color:#555; font-size:14px; margin-left:8px;">${formattedDate}</span>`;
       list.appendChild(li);
     }
@@ -106,5 +94,5 @@ function loadNews() {
 // Initial load
 loadNews();
 
-// Refresh ogni 5 minuti (300.000 ms)
+// Refresh ogni 5 minuti
 setInterval(loadNews, 300000);
